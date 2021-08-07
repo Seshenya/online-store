@@ -9,12 +9,14 @@ interface Props { }
 
 const ShopStore: React.FunctionComponent<Props> = () => {
   const sizes = [{ name: "All", value: "all" }, { name: "XS", value: "xsmall" }, { name: "S", value: "small" }, { name: "M", value: "medium" }, { name: "L", value: "large" }, { name: "XL", value: "xlarge" }];
+  const options = [{ name: "All", value: "all" }, { name: "T-shirt", value: "t-shirt" }, { name: "Dress shirts", value: "dress shirts" }];
+
   const [originalItemList, setOriginalItemList] = useState<Array<ShopItem>>([]);
   const [shoppingItems, setShoppingItems] = useState<Array<ShopItem>>([]);
-  const [filterName, setFilterName] = useState("");
+  const [filterName, setFilterName] = useState("all");
   const [isShowCart, setIsShowCart] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const [optionName, setOptionName] = useState("all");
 
 
   useEffect(() => {
@@ -23,7 +25,7 @@ const ShopStore: React.FunctionComponent<Props> = () => {
 
   useEffect(() => {
     getFilterdItems();
-  }, [filterName]);
+  }, [filterName, optionName]);
 
   const fetchAllItems = async () => {
     try {
@@ -40,16 +42,26 @@ const ShopStore: React.FunctionComponent<Props> = () => {
   }
 
   const getFilterdItems = () => {
-    if (filterName === "all") {
+    if (filterName === "all" && optionName === "all") {
       setShoppingItems(originalItemList);
-    } else {
+    } else if(optionName === "all"){
       const items = originalItemList.filter(item => item.details.size === filterName);
+      setShoppingItems(items);
+    } else if(filterName === "all") {
+      const items = originalItemList.filter(item => item.details.type === optionName);
+      setShoppingItems(items);
+    } else {
+      const items = originalItemList.filter(item => item.details.size === filterName && item.details.type === optionName);
       setShoppingItems(items);
     }
   }
 
   const selectFilter = (event: any) => {
     setFilterName(event);
+  }
+
+  const selectOption = (event: any) => {
+    setOptionName(event);
   }
 
   const showCart = () => {
@@ -82,6 +94,20 @@ const ShopStore: React.FunctionComponent<Props> = () => {
               ))}
             </DropdownButton>
           </Dropdown></div>
+          <div className="cart-title">      <Dropdown >
+            <DropdownButton
+              variant="dark"
+              alignRight
+              title="Select option"
+              id="dropdown-menu-align-right"
+              onSelect={selectOption}
+
+            >
+              {options.map((option) => (
+                <Dropdown.Item key={option.value} eventKey={option.value} value={option.value}>{option.name}</Dropdown.Item>
+              ))}
+            </DropdownButton>
+          </Dropdown></div>
 
           {(!shoppingItems || shoppingItems.length === 0) && (<div>No items to show</div>)}
           {shoppingItems && shoppingItems.length > 0 && (<div className="shopping-list">
@@ -95,7 +121,6 @@ const ShopStore: React.FunctionComponent<Props> = () => {
           </div>)}
         </div>}
       </div>}
-
 
     </div>
   );
