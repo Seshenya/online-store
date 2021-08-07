@@ -1,14 +1,11 @@
 import './App.scss';
-import Shop from "./modules/shop-store";
+import * as React from "react";
+import ShopStore from "./modules/shop-store";
 
-function App() {
+const App: React.FunctionComponent = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <Shop/>
-      </header>
-    </div>
+    <ShopStore/>
   );
-}
+};
 
 export default App;
