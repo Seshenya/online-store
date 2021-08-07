@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Dropdown, DropdownButton, Row } from "react-bootstrap";
 import getAllItems, { ShopItem } from "../../services/get-all-items";
+import LoadingSpinner from "../loader";
 import ShoppingCart from "../shopping-cart";
 import ShoppingItem from "../shopping-item";
 
@@ -12,6 +13,8 @@ const ShopStore: React.FunctionComponent<Props> = () => {
   const [shoppingItems, setShoppingItems] = useState<Array<ShopItem>>([]);
   const [filterName, setFilterName] = useState("");
   const [isShowCart, setIsShowCart] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+
 
 
   useEffect(() => {
@@ -28,6 +31,7 @@ const ShopStore: React.FunctionComponent<Props> = () => {
       if (items && items.length > 0) {
         setOriginalItemList(items);
         setShoppingItems(items);
+        setLoading(false);
       }
     } catch (error) {
       //TODO: Exception handling
@@ -59,33 +63,39 @@ const ShopStore: React.FunctionComponent<Props> = () => {
   return (
     <div>
       <p className="online-store-title">Shop Online</p>
-      <ShoppingCart showCart={isShowCart} onBack={onBack}/>     
-      {!isShowCart && <div>
-        <Button onClick={showCart}>Show cart</Button>
-      <Dropdown >
-        <DropdownButton
-          alignRight
-          title="Select size"
-          id="dropdown-menu-align-right"
-          onSelect={selectFilter}
+      {loading && <LoadingSpinner />}
+      {!loading && <div>
+        <ShoppingCart showCart={isShowCart} onBack={onBack} />
+        {!isShowCart && <div>
+          <div className="cart-title"><Button variant="dark" onClick={showCart}>Show cart</Button></div>
+          <div className="cart-title">      <Dropdown >
+            <DropdownButton
+              variant="dark"
+              alignRight
+              title="Select size"
+              id="dropdown-menu-align-right"
+              onSelect={selectFilter}
 
-        >
-          {sizes.map((size) => (
-            <Dropdown.Item key={size.value} eventKey={size.value} value={size.value}>{size.name}</Dropdown.Item>
-          ))}
-        </DropdownButton>
-      </Dropdown>
-      {(!shoppingItems || shoppingItems.length === 0) && (<div>No items to show</div>)}
-      {shoppingItems && shoppingItems.length > 0 && (<div>
-        <Row>
-          {shoppingItems.map((item: ShopItem, index: number) => (
-            <Col xs={12} md={6} lg={3} style={{ marginBottom: '50px', display: "flex", justifyContent: "center", paddingLeft: 0, paddingRight: 0 }} key={item.id}>
-              <ShoppingItem shoppingItem={item} isAddToCart={true} />
-            </Col>
-          ))}
-        </Row>
-      </div>)}
+            >
+              {sizes.map((size) => (
+                <Dropdown.Item key={size.value} eventKey={size.value} value={size.value}>{size.name}</Dropdown.Item>
+              ))}
+            </DropdownButton>
+          </Dropdown></div>
+
+          {(!shoppingItems || shoppingItems.length === 0) && (<div>No items to show</div>)}
+          {shoppingItems && shoppingItems.length > 0 && (<div className="shopping-list">
+            <Row>
+              {shoppingItems.map((item: ShopItem, index: number) => (
+                <Col style={{ marginBottom: '50px', display: "flex", justifyContent: "center", paddingLeft: 0, paddingRight: 0 }} key={item.id}>
+                  <ShoppingItem shoppingItem={item} isAddToCart={true} />
+                </Col>
+              ))}
+            </Row>
+          </div>)}
+        </div>}
       </div>}
+
 
     </div>
   );

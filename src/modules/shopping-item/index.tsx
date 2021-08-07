@@ -21,23 +21,21 @@ const ShoppingItem: React.FunctionComponent<Props> = ({ shoppingItem, isAddToCar
     }
 
     return (
-        <div>
-            <Card style={{ width: '450px', height: ' 550px' }} border="light" bg='light' text='dark'>
+        <div className="shop-item">
+            <Card style={{ width: '350px', height: ' 450px' }} border="light" bg='light' text='dark'>
                 <Card.Header style={{ fontSize: 20, height: 50 }}>
                     <div>{shoppingItem.details.tag}</div></Card.Header>
                 <Card.Body>
-                    <Card.Img style={{ width: '250px', height: ' 300px' }} src={shoppingItem.details.image} />
-                    <Card.Text>
+                    <Card.Img style={{ width: '150px', height: '200px' }} src={shoppingItem.details.image} />
+                    <Card.Text className="card-text">
                         {shoppingItem.name}
                     </Card.Text>
                     <Card.Text>
                         $ {shoppingItem.details.price}
                     </Card.Text>
-                    <Card.Text>
-                        {isAddToCart && <Button onClick={(): void => addCart(shoppingItem)}>Add to Cart</Button>}
-                        {!isAddToCart && <Button onClick={(): void => removeCart(shoppingItem)}>Remove from Cart</Button>}
-                    </Card.Text>
                 </Card.Body>
+                <Card.Footer className="text-muted">{isAddToCart && <Button variant="dark" onClick={(): void => addCart(shoppingItem)}>Add to Cart</Button>}
+                    {!isAddToCart && <Button variant="dark" onClick={(): void => removeCart(shoppingItem)}>Remove from Cart</Button>}</Card.Footer>
             </Card>
         </div>
     );
